@@ -28,6 +28,13 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     }
+
+    register<Copy>("packageDistribution") {
+        dependsOn("shadowJar")
+        from("${project.rootDir}/scripts/cli-app-template.sh")
+        from("${project.buildDir}/libs/${project.name}.jar")
+        into("${project.buildDir}/dist")
+    }
 }
 
 application {
@@ -36,7 +43,7 @@ application {
 }
 
 tasks.withType<ShadowJar> {
-    archiveBaseName.set("app")
+    archiveBaseName.set("cli-app-template")
     archiveClassifier.set("")
     archiveVersion.set("")
 }
