@@ -33,6 +33,7 @@ jobs:
           sed -i '3d' README.md
           sed -i "s/beiertu-mms/$ACTOR/g" README.md
           sed -i "s/cli-app-template/$NAME/g" *.gradle.kts README.md scripts/*
+          sed -i "s;|.github/workflows/cleanup.yaml;;g" .github/workflows/ci.yaml
 
           # Move content
           mkdir -vp src/main/kotlin/${GROUP//.//}

@@ -16,7 +16,7 @@ jobs:
       - name: Lint code base
         uses: github/super-linter@v4.8.5
         env:
-          FILTER_REGEX_EXCLUDE: (gradlew|gradle/.*)
+          FILTER_REGEX_EXCLUDE: (gradlew|gradle/.*|.github/workflows/cleanup.yaml)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
