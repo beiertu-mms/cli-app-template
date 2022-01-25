@@ -1,0 +1,59 @@
+---
+name: Cleanup after Creation
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.name != 'cli-app-template' }}
+    steps:
+      - name: Checkout code base
+        uses: actions/checkout@v2.4.0
+
+      - name: Cleanup
+        run: |
+          export LC_CTYPE=C
+          export LANG=C
+
+          # Prepare variables
+          NAME="${GITHUB_REPOSITORY##*/}"
+          ACTOR=$(echo $GITHUB_ACTOR | tr '[:upper:]' '[:lower:]')
+          SAFE_NAME=$(echo $NAME | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+          SAFE_ACTOR=$(echo $ACTOR | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+          GROUP="com.github.$SAFE_ACTOR.$SAFE_NAME"
+
+          # Replace user and app name
+          find src -type f -exec sed -i "s/de.beiertu.cli.template/$GROUP/g" {} +
+          sed -i "s/de.beiertu.cli.template/$GROUP/g" build.gradle.kts
+          sed -i "1 s/^.*$/# $NAME/" README.md
+          sed -i '3d' README.md
+          sed -i "s/beiertu-mms/$ACTOR/g" README.md
+          sed -i "s/cli-app-template/$NAME/g" *.gradle.kts README.md scripts/*
+
+          # Move content
+          mkdir -vp src/main/kotlin/${GROUP//.//}
+          mv -v src/main/kotlin/de/beiertu/cli/template/* src/main/kotlin/${GROUP//.//}/
+          mv -v scripts/cli-app-template.sh scripts/$NAME.sh
+
+          # Remove template files
+          rm -rf \
+            .github/workflows/cleanup.yaml \
+            src/main/kotlin/de \
+            LICENSE
+
+      - name: Commit modified files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Cleanup template files"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: master
+          github_token: ${{ secrets.GITHUB_TOKEN }}
