@@ -2,7 +2,7 @@
 name: CI
 on:
   push:
-
+  pull_request_target:
 
 jobs:
   linter:
@@ -40,7 +40,7 @@ jobs:
     name: Merge dependabot PR
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request_target' }}
     steps:
       - name: Fetch PR metadata
         uses: dependabot/fetch-metadata@v1.1.1
