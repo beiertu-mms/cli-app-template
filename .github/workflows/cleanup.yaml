@@ -12,7 +12,7 @@ jobs:
     if: ${{ github.event.repository.name != 'cli-app-template' }}
     steps:
       - name: Checkout code base
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2
 
       - name: Cleanup
         run: |
