@@ -19,6 +19,9 @@ indent_size = 2
 tab_width = 2
 ij_continuation_indent_size = 4
 
+[Makefile]
+indent_style = tab
+
 [{*.kt,*.kts}]
 ij_continuation_indent_size = 4
 ij_kotlin_align_in_columns_case_branch = false
